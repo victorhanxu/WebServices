@@ -1,0 +1,16 @@
+package com.ls.demo;
+
+public class TestWebservice {
+
+	public static void main(String[] args) {
+		HelloWorld service = new HelloWorldService().getHelloWorldPort();
+		String response = null;
+		try {
+			response=service.sayHello("China");
+		} catch (Exception e) {
+			System.out.println(e.toString());
+		}
+		System.out.println("Response from SOAP: "+response);
+	}
+
+}

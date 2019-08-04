@@ -1,0 +1,121 @@
+package com.ls.demo.client;
+                                                                                                                                                                                                           
+import java.io.BufferedReader;     
+                                                                        
+import java.io.DataOutputStream;                                                                           
+import java.io.InputStream;                                                                                
+import java.io.InputStreamReader;                                                                          
+import java.net.HttpURLConnection;                                                                         
+import java.net.URL;
+import java.util.List;
+
+import org.apache.commons.httpclient.HttpClient;                                                           
+import org.apache.commons.httpclient.methods.PostMethod;                                                   
+import org.apache.commons.httpclient.methods.RequestEntity;                                                
+import org.apache.commons.httpclient.methods.StringRequestEntity;                                          
+import org.apache.commons.io.IOUtils;                                                                      
+
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
+import org.xml.sax.InputSource;
+
+public class TestHelloWrold {                                                                              
+    @SuppressWarnings("deprecation")
+	public static void main(String[] args) throws Exception {                                              
+        String wsdl = "http://localhost:9000/HelloWorld?wsdl";
+        int timeout = 10000;                                                                               
+        StringBuffer sb = new StringBuffer("");                                                            
+        sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");                                           
+        sb.append("<soap:Envelope "                                                                        
+                + "xmlns:api='http://demo.ls.com/' "                                                       
+                + "xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' "                                 
+                + "xmlns:xsd='http://www.w3.org/2001/XMLSchema' "                                          
+                + "xmlns:soap='http://schemas.xmlsoap.org/soap/envelope/'>");                              
+        sb.append("<soap:Body>");                                                                          
+        sb.append("<api:sayHello>");                                                                       
+        sb.append("<arg0>Victor</arg0>");                                                                      
+        sb.append("</api:sayHello>");                                                                      
+        sb.append("</soap:Body>");                                                                         
+        sb.append("</soap:Envelope>");                                                                     
+                                                                                                                                                                                                                     
+        System.out.println("\n-------------HttpClient send SOAP request--------------"); 
+        HttpClient client = new HttpClient();                                                              
+        PostMethod postMethod = new PostMethod(wsdl);  
+        client.getHttpConnectionManager().getParams().setConnectionTimeout(timeout);                       
+        //set read time out                                                                                        
+        client.getHttpConnectionManager().getParams().setSoTimeout(timeout);                               
+        // add soap request to PostMethod                                                                       
+        RequestEntity requestEntity = new StringRequestEntity(sb.toString(), "text/xml", "UTF-8");         
+        postMethod.setRequestHeader("SOAPAction","");                                                      
+        postMethod.setRequestEntity(requestEntity);                                                        
+        int status = client.executeMethod(postMethod);                                                     
+        System.out.println("status:" + status);                                                            
+        InputStream is = postMethod.getResponseBodyAsStream();                                             
+        String result = IOUtils.toString(is);                                                              
+        System.out.println("result: " + result);                                                           
+
+        System.out.println("\n--------------Parse XML Response--------------------");
+        //There are problems in XML parsing response
+        String xmlResponse = IOUtils.toString(is);
+        System.out.println("xmlResponse is:"+xmlResponse);
+        //		Document dc = strXmlToDocument(xmlResponse);
+//		Element root = dc.getRootElement();
+//		System.out.println(root.getName());
+//		System.out.println("xmlResponse: " + xmlResponse);
+		
+
+        System.out.println("\n----------------HttpURLConnection send SOAP request---------------");                                                  
+        URL url = new URL(wsdl);   
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();                                 
+        conn.setRequestProperty("Content-Type", "text/xml; charset=utf-8");                                
+        conn.setRequestMethod("POST");                                                                     
+        conn.setUseCaches(false);                                                                          
+        conn.setDoInput(true);                                                                             
+        conn.setDoOutput(true);                                                                            
+        conn.setConnectTimeout(timeout);                                                                   
+        conn.setReadTimeout(timeout);                                                                      
+        DataOutputStream dos = new DataOutputStream(conn.getOutputStream());                               
+        dos.write(sb.toString().getBytes("utf-8"));                                                        
+        dos.flush();                                                                                       
+        BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream(), "utf-8"));
+        String line = null;                                                                                
+        StringBuffer strBuf = new StringBuffer();                                                          
+        while ((line = reader.readLine()) != null) {                                                       
+            strBuf.append(line);                                                                           
+        }                                                                                                  
+        System.out.println(strBuf.toString());   
+		dos.close();                                                                                       
+        reader.close();     
+    }      
+    
+    
+    public static Document strXmlToDocument(String parseStrXml){        
+        Document document = null;
+       try {
+           document = DocumentHelper.parseText(parseStrXml);            
+           Element root = document.getRootElement();
+           List<Element> list = root.elements();
+           getElement(list);
+       } catch (DocumentException e) {
+           e.printStackTrace();
+       }          
+       return document;
+   }
+   
+   private static void getElement(List<Element> sonElemetList) {
+//       Map<String,String> map = new HashMap<String, String>();
+       for (Element sonElement : sonElemetList) {
+               if (sonElement.elements().size() != 0) {
+                   System.out.println(sonElement.getName() + ":");
+                   getElement(sonElement.elements());
+               }else{
+                   System.out.println(sonElement.getName() + ":"+ sonElement.getText());
+               }
+
+       }
+   }    
+    
+    
+}

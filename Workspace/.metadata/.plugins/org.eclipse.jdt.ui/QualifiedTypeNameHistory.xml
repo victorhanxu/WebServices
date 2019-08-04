@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<qualifiedTypeNameHistroy>
+<fullyQualifiedTypeName name="javax.xml.ws.Endpoint"/>
+<fullyQualifiedTypeName name="org.apache.commons.httpclient.HttpClient"/>
+<fullyQualifiedTypeName name="org.apache.http.client.HttpClient"/>
+<fullyQualifiedTypeName name="com.ls.demo.HelloWorldService"/>
+<fullyQualifiedTypeName name="com.ls.demo.HelloWorldServiceLocator"/>
+<fullyQualifiedTypeName name="org.tempuri.Calculator"/>
+<fullyQualifiedTypeName name="org.tempuri.CalculatorLocator"/>
+<fullyQualifiedTypeName name="org.tempuri.CalculatorSoap"/>
+<fullyQualifiedTypeName name="java.util.List"/>
+</qualifiedTypeNameHistroy>
