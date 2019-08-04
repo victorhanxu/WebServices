@@ -4,6 +4,7 @@ import javax.jws.WebMethod;
 import javax.jws.WebService;
 import javax.xml.ws.Endpoint;
 //This is SOAP web service demo project, it provides a soap service interface(method) to client.
+//Run main() from those WSClient* projects
 @WebService
 public class HelloWorld {
 	@WebMethod
